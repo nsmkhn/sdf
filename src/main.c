@@ -407,9 +407,12 @@ void scene(rgb *pixels, size_t width, size_t height, float t)
             float d_sun = sdf_circle(px, py, cx, cy, sun_r);
             float d_prom = sdf_circle(px, py, prom_x, prom_y, prom_r);
             float d_sun_full = smin(d_sun, d_prom, sun_k);
-            color = lerp_color(color, lerp_color(bg, sun_col, 0.06f), smoothstep(sun_r * 3.0f, 0.0f, d_sun_full));
-            color = lerp_color(color, lerp_color(bg, sun_col, 0.22f), smoothstep(sun_r * 1.5f, 0.0f, d_sun_full));
-            color = lerp_color(color, lerp_color(bg, sun_col, 0.55f), smoothstep(sun_r * 0.4f, 0.0f, d_sun_full));
+            color = lerp_color(color, lerp_color(bg, sun_col, 0.06f),
+                               smoothstep(sun_r * 3.0f, 0.0f, d_sun_full)); // wide dim corona
+            color = lerp_color(color, lerp_color(bg, sun_col, 0.22f),
+                               smoothstep(sun_r * 1.5f, 0.0f, d_sun_full)); // inner glow
+            color = lerp_color(color, lerp_color(bg, sun_col, 0.55f),
+                               smoothstep(sun_r * 0.4f, 0.0f, d_sun_full)); // sharp edge
             color = lerp_color(color, sun_col, smoothstep(1.0f, -1.0f, d_sun_full));
 
             float d_p1 = sdf_circle(px, py, p1x, p1y, r1);
