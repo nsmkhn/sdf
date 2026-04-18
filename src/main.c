@@ -332,6 +332,29 @@ void smooth_union(rgb *pixels, size_t width, size_t height, rgb bg, rgb fg)
     }
 }
 
+void domain_distortion(rgb *pixels, size_t width, size_t height, rgb bg, rgb fg)
+{
+    float cx = width / 2.0f, cy = height / 2.0f;
+    float radius = width / 4.0f;
+
+    for (size_t y = 0; y < height; ++y)
+    {
+        for (size_t x = 0; x < width; ++x)
+        {
+            float px = (float)x, py = (float)y;
+            // Sine wave distortion: horizontal waves
+            float distorted_px = px + sinf(py * 0.01f) * 20.0f;
+            float d = sdf_circle(distorted_px, py, cx, cy, radius);
+
+            // Render with glow layers
+            pixels[y * width + x] = smooth(d, bg, fg);
+            float glow_alpha = smoothstep(radius * 2.0f, 0.0f, d);
+            rgb glow_color = lerp_color(bg, fg, glow_alpha * 0.3f);
+            pixels[y * width + x] = lerp_color(pixels[y * width + x], glow_color, glow_alpha * 0.5f);
+        }
+    }
+}
+
 void scene(rgb *pixels, size_t width, size_t height, float t)
 {
     float cx = width / 2.0f, cy = height / 2.0f;
@@ -474,6 +497,10 @@ int main()
 
     smooth_union(wide_pixels, WIDTH * 3 / 2, HEIGHT, navy, honeydew);
     save_as_ppm("output/smooth_union.ppm", wide_pixels, WIDTH * 3 / 2, HEIGHT);
+
+    fill_pixels(pixels, NUM_PIXELS, navy);
+    domain_distortion(pixels, WIDTH, HEIGHT, navy, honeydew);
+    save_as_ppm("output/domain_distortion.ppm", pixels, WIDTH, HEIGHT);
 
     scene(pixels, WIDTH, HEIGHT, 0.0f);
     save_as_ppm("output/scene.ppm", pixels, WIDTH, HEIGHT);

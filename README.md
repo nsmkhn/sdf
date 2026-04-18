@@ -15,6 +15,7 @@ Companion source for the blog post: **[Signed distance fields from scratch in C]
 | `shapes.ppm`             | Circle, box, and rounded box side by side |
 | `booleans.ppm`           | Union, intersection, and subtraction      |
 | `smooth_union.ppm`       | Hard union vs smooth union (smin)         |
+| `domain_distortion.ppm`  | Domain warping: rippled circle with glow  |
 | `scene.ppm`              | Static frame of the final scene           |
 | `animation.mp4`          | Animated solar system (60fps, 10s loop)   |
 
