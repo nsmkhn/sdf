@@ -1,6 +1,6 @@
 # sdf
 
-Signed distance field renderer written from scratch in C. No dependencies beyond `libc` and `libm` — output is PPM images and a WebM animation.
+Signed distance field renderer written from scratch in C. No dependencies beyond `libc` and `libm` — output is [PPM images](https://netpbm.sourceforge.net/doc/ppm.html) and a WebM animation.
 
 Companion source for the blog post: **[Signed distance fields from scratch in C](#)** _(link once published)_
 
