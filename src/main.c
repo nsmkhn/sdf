@@ -24,7 +24,7 @@
 
 #define ROUNDED_BOX_RADIUS 64.0f
 
-typedef struct
+typedef struct __attribute__((packed))
 {
     uint8_t r;
     uint8_t g;
@@ -355,7 +355,7 @@ void domain_distortion(rgb *pixels, size_t width, size_t height, rgb bg, rgb fg)
     }
 }
 
-void scene(rgb *pixels, size_t width, size_t height, float t)
+void space_scene(rgb *pixels, size_t width, size_t height, float t)
 {
     float cx = width / 2.0f, cy = height / 2.0f;
 
@@ -465,6 +465,64 @@ void scene(rgb *pixels, size_t width, size_t height, float t)
     }
 }
 
+void sdf_metaballs(rgb *pixels, size_t width, size_t height, float t)
+{
+    float cx = width / 2.0f, cy = height / 2.0f;
+
+    rgb bg = RGB_HEX(NAVY);
+    rgb c1 = RGB_HEX(INDIGO);
+    rgb c2 = RGB_HEX(ROSE);
+    rgb c3 = RGB_HEX(TEAL);
+    rgb c4 = RGB_HEX(AMBER);
+
+    float r = width * 0.08f;
+    float k = width * 0.06f;
+
+    float a1 = t * 2.0f * (float)M_PI * 1.0f;
+    float a2 = t * 2.0f * (float)M_PI * 2.0f;
+    float a3 = t * 2.0f * (float)M_PI * 3.0f;
+    float a4 = t * 2.0f * (float)M_PI * 5.0f;
+
+    float p1x = cx + width * 0.20f * cosf(a1), p1y = cy + width * 0.20f * sinf(a1);
+    float p2x = cx + width * 0.17f * cosf(a2), p2y = cy + width * 0.17f * sinf(a2);
+    float p3x = cx + width * 0.22f * cosf(a3), p3y = cy + width * 0.22f * sinf(a3);
+    float p4x = cx + width * 0.15f * cosf(a4), p4y = cy + width * 0.15f * sinf(a4);
+
+    for (size_t y = 0; y < height; ++y)
+    {
+        for (size_t x = 0; x < width; ++x)
+        {
+            float d1 = sdf_circle(x, y, p1x, p1y, r);
+            float d2 = sdf_circle(x, y, p2x, p2y, r);
+            float d3 = sdf_circle(x, y, p3x, p3y, r);
+            float d4 = sdf_circle(x, y, p4x, p4y, r);
+
+            float d = d1;
+            d = smin(d, d2, k);
+            d = smin(d, d3, k);
+            d = smin(d, d4, k);
+
+            float w1 = 1.0f / (d1 + r + 1.0f);
+            float w2 = 1.0f / (d2 + r + 1.0f);
+            float w3 = 1.0f / (d3 + r + 1.0f);
+            float w4 = 1.0f / (d4 + r + 1.0f);
+            float total = w1 + w2 + w3 + w4;
+
+            rgb col = {
+                .r = (uint8_t)(c1.r * (w1 / total) + c2.r * (w2 / total) + c3.r * (w3 / total) + c4.r * (w4 / total)),
+                .g = (uint8_t)(c1.g * (w1 / total) + c2.g * (w2 / total) + c3.g * (w3 / total) + c4.g * (w4 / total)),
+                .b = (uint8_t)(c1.b * (w1 / total) + c2.b * (w2 / total) + c3.b * (w3 / total) + c4.b * (w4 / total))};
+
+            rgb color = bg;
+            color = lerp_color(color, lerp_color(bg, col, 0.08f), smoothstep(r * 4.0f, 0.0f, d));
+            color = lerp_color(color, lerp_color(bg, col, 0.40f), smoothstep(r * 1.5f, 0.0f, d));
+            color = lerp_color(color, col, smoothstep(1.0f, -1.0f, d));
+
+            pixels[y * width + x] = color;
+        }
+    }
+}
+
 int main()
 {
     static rgb pixels[NUM_PIXELS];
@@ -502,7 +560,7 @@ int main()
     domain_distortion(pixels, WIDTH, HEIGHT, navy, honeydew);
     save_as_ppm("output/domain_distortion.ppm", pixels, WIDTH, HEIGHT);
 
-    scene(pixels, WIDTH, HEIGHT, 0.0f);
+    space_scene(pixels, WIDTH, HEIGHT, 0.0f);
     save_as_ppm("output/scene.ppm", pixels, WIDTH, HEIGHT);
 
     int fps = 60;
@@ -511,9 +569,9 @@ int main()
     for (int frame = 0; frame < num_frames; ++frame)
     {
         float t = frame / (float)num_frames;
-        scene(pixels, WIDTH, HEIGHT, t);
         char filename[64];
-        snprintf(filename, sizeof(filename), "output/frame_%04d.ppm", frame);
+        snprintf(filename, sizeof(filename), "output/metaballs_%04d.ppm", frame);
+        sdf_metaballs(pixels, WIDTH, HEIGHT, t);
         save_as_ppm(filename, pixels, WIDTH, HEIGHT);
     }
 
