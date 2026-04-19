@@ -66,17 +66,17 @@ void fill_pixels(rgb *pixels, size_t num_pixels, rgb color)
 
 float sdf_circle(float px, float py, float cx, float cy, float r)
 {
-    return sqrt((px - cx) * (px - cx) + (py - cy) * (py - cy)) - r;
+    return sqrtf((px - cx) * (px - cx) + (py - cy) * (py - cy)) - r;
 }
 
 float sdf_box(float px, float py, float cx, float cy, float hw, float hh)
 {
-    float qx = fabs(cx - px) - hw;
-    float qy = fabs(cy - py) - hh;
+    float qx = fabsf(cx - px) - hw;
+    float qy = fabsf(cy - py) - hh;
 
     float ex = MAX(qx, 0);
     float ey = MAX(qy, 0);
-    float outside = sqrt((ex * ex) + (ey * ey));
+    float outside = sqrtf((ex * ex) + (ey * ey));
     float inside = MIN(MAX(qx, qy), 0);
 
     return outside + inside;
@@ -128,7 +128,12 @@ void circle_hard(rgb *pixels, size_t width, size_t height, rgb bg, rgb fg)
 
 rgb lerp_color(rgb a, rgb b, float t)
 {
-    return (rgb){.r = a.r + t * (b.r - a.r), .g = a.g + t * (b.g - a.g), .b = a.b + t * (b.b - a.b)};
+    t = clamp(t, 0.0f, 1.0f);
+    return (rgb){
+        .r = (uint8_t)((float)a.r * (1.0f - t) + (float)b.r * t + 0.5f),
+        .g = (uint8_t)((float)a.g * (1.0f - t) + (float)b.g * t + 0.5f),
+        .b = (uint8_t)((float)a.b * (1.0f - t) + (float)b.b * t + 0.5f),
+    };
 }
 
 rgb smooth(float d, rgb bg, rgb fg)

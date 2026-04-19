@@ -1,4 +1,4 @@
-.PHONY: all animate-only animate clean run
+.PHONY: all run animate-only animate clean
 
 CC      = cc
 CFLAGS  = -Wall -Wextra -O3 -std=c23 -Wpedantic
@@ -13,6 +13,9 @@ $(BIN): $(SRC)
 	mkdir -p bin output
 	$(CC) $(CFLAGS) $(SRC) -o $(BIN) $(LDFLAGS)
 	@echo "Built $(BIN)"
+
+run: $(BIN)
+	./$(BIN)
 
 animate-only:
 	@if command -v ffmpeg &> /dev/null; then \
