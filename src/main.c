@@ -33,7 +33,7 @@ typedef struct __attribute__((packed))
 
 void save_as_ppm(const char *path, rgb *pixels, size_t width, size_t height)
 {
-    FILE *fp = fopen(path, "w");
+    FILE *fp = fopen(path, "wb");
     if (fp == NULL)
     {
         fprintf(stderr, "Failed to open file '%s', error: %s", path, strerror(errno));
@@ -558,7 +558,6 @@ int main()
     smooth_union(wide_pixels, WIDTH * 3 / 2, HEIGHT, navy, honeydew);
     save_as_ppm("output/smooth_union.ppm", wide_pixels, WIDTH * 3 / 2, HEIGHT);
 
-    fill_pixels(pixels, NUM_PIXELS, navy);
     domain_distortion(pixels, WIDTH, HEIGHT, navy, honeydew);
     save_as_ppm("output/domain_distortion.ppm", pixels, WIDTH, HEIGHT);
 
