@@ -1,4 +1,4 @@
-# sdf
+# sdf [![Build](https://github.com/nsmkhn/sdf/actions/workflows/build.yml/badge.svg)](https://github.com/nsmkhn/sdf/actions/workflows/build.yml)
 
 Signed distance field renderer written from scratch in C. No dependencies beyond the C standard library — output is [PPM images](https://netpbm.sourceforge.net/doc/ppm.html) and an MP4 animation.
 
