@@ -21,22 +21,17 @@ Companion source for the blog post: **[Signed distance fields from scratch in C]
 
 ## Build
 
-```bash
-make          # compile + generate all images and animation frames
-make animate  # same as above, then stitch frames into animation.mp4
-```
-
-Requires `ffmpeg` for animation output:
+Requires a C compiler and `ffmpeg`:
 
 ```bash
-brew bundle   # installs ffmpeg via Brewfile
+# macOS: brew bundle
+# Linux: sudo apt-get install ffmpeg
+# Windows: choco install ffmpeg make (or download from ffmpeg.org)
+
+make animate  # compile, generate images and animation
 ```
 
-If frames are already generated, convert without re-rendering:
-
-```bash
-make animate-only
-```
+The Makefile detects the OS and uses the appropriate compiler (`cc` on macOS/Linux, `cl` on Windows).
 
 ## Clean
 

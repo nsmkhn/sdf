@@ -6,6 +6,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846264338327950288
+#endif
+
 #define WIDTH 512
 #define HEIGHT 512
 #define NUM_PIXELS (WIDTH) * (HEIGHT)
@@ -24,7 +28,7 @@
 
 #define ROUNDED_BOX_RADIUS 64.0f
 
-typedef struct __attribute__((packed))
+typedef struct
 {
     uint8_t r;
     uint8_t g;
