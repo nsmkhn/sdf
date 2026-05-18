@@ -12,7 +12,7 @@
 
 #define WIDTH      512
 #define HEIGHT     512
-#define NUM_PIXELS (WIDTH) * (HEIGHT)
+#define NUM_PIXELS ((WIDTH) * (HEIGHT))
 
 #define RGB_HEX(hex) (rgb) {((hex) >> 16) & 0xFF, ((hex) >> 8) & 0xFF, (hex) & 0xFF}
 #define HONEYDEW     0xF0FFF0
@@ -22,9 +22,6 @@
 #define AMBER        0xFBBF24
 #define TEAL         0x2DD4BF
 #define SLATE        0x1E2D40
-
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
 #define ROUNDED_BOX_RADIUS 64.0f
 
@@ -78,10 +75,10 @@ float sdf_box(float px, float py, float cx, float cy, float hw, float hh)
     float qx = fabsf(cx - px) - hw;
     float qy = fabsf(cy - py) - hh;
 
-    float ex      = MAX(qx, 0);
-    float ey      = MAX(qy, 0);
+    float ex      = fmaxf(qx, 0);
+    float ey      = fmaxf(qy, 0);
     float outside = sqrtf((ex * ex) + (ey * ey));
-    float inside  = MIN(MAX(qx, qy), 0);
+    float inside  = fminf(fmaxf(qx, qy), 0);
 
     return outside + inside;
 }
@@ -93,22 +90,22 @@ float sdf_rounded_box(float px, float py, float cx, float cy, float hw, float hh
 
 float sdf_union(float a, float b)
 {
-    return MIN(a, b);
+    return fminf(a, b);
 }
 
 float sdf_intersection(float a, float b)
 {
-    return MAX(a, b);
+    return fmaxf(a, b);
 }
 
 float sdf_subtraction(float a, float b)
 {
-    return MAX(a, -b);
+    return fmaxf(a, -b);
 }
 
 float clamp(float value, float low, float high)
 {
-    return MAX(low, MIN(value, high));
+    return fmaxf(low, fminf(value, high));
 }
 
 float smoothstep(float edge0, float edge1, float t)
