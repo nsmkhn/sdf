@@ -31,9 +31,7 @@ run: $(BIN)
 	$(BIN)
 
 animate-only:
-	ffmpeg -y -framerate 60 -i output/metaballs_%04d.ppm \
-	-c:v libx264 -pix_fmt yuv420p -crf 18 -preset slow \
-	-movflags faststart output/metaballs.mp4
+	ffmpeg -y -framerate 60 -i output/metaballs_%04d.ppm -c:v libx264 -pix_fmt yuv420p -crf 18 -preset slow -movflags faststart output/metaballs.mp4
 
 animate: run animate-only
 
